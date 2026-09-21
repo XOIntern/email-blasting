@@ -1,20 +1,25 @@
 {
   "name": "email-blasting",
+  "type": "module",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "bun --bun next dev",
     "build": "bun --bun next build",
     "start": "bun --bun next start",
-    "lint": "bun --bun eslint"
+    "lint": "bun --bun eslint",
+    "contract:emit": "prisma contract emit"
   },
   "dependencies": {
     "@prisma/client": "^7.10.0",
+    "@prisma/orm-postgres": "^8.0.0-rc.11",
+    "dotenv": "^18.0.1",
     "next": "16.3.5",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
+    "@prisma/cli-engine": "0.4.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
