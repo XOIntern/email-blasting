@@ -1,0 +1,262 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.email",
+    "label": "Create table \"email\"",
+    "summary": "Creates table \"email\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "email"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"email\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"email\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"email\"",
+        "sql": "CREATE TABLE \"public\".\"email\" (\n  \"body\" text NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"subject\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"email\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"email\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "table.recipient",
+    "label": "Create table \"recipient\"",
+    "summary": "Creates table \"recipient\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "recipient"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"recipient\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipient\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"recipient\"",
+        "sql": "CREATE TABLE \"public\".\"recipient\" (\n  \"emailAddress\" text NOT NULL,\n  \"emailId\" int4 NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"recipient\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipient\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.recipient.recipient_name_key",
+    "label": "Add unique constraint on \"recipient\" (name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "recipient_name_key",
+        "table": "recipient"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"recipient_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipient_name_key",
+          "public",
+          "\"public\".\"recipient\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"recipient_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"recipient\" ADD CONSTRAINT \"recipient_name_key\" UNIQUE (\"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"recipient_name_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipient_name_key",
+          "public",
+          "\"public\".\"recipient\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.recipient.recipient_emailAddress_key",
+    "label": "Add unique constraint on \"recipient\" (emailAddress)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "recipient_emailAddress_key",
+        "table": "recipient"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"recipient_emailAddress_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipient_emailAddress_key",
+          "public",
+          "\"public\".\"recipient\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"recipient_emailAddress_key\"",
+        "sql": "ALTER TABLE \"public\".\"recipient\" ADD CONSTRAINT \"recipient_emailAddress_key\" UNIQUE (\"emailAddress\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify constraint \"recipient_emailAddress_key\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipient_emailAddress_key",
+          "public",
+          "\"public\".\"recipient\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.recipient.recipient_emailId_idx_f0213919",
+    "label": "Create index \"recipient_emailId_idx_f0213919\" on \"recipient\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "recipient_emailId_idx_f0213919",
+        "table": "recipient"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"recipient_emailId_idx_f0213919\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipient_emailId_idx_f0213919\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"recipient_emailId_idx_f0213919\"",
+        "sql": "CREATE INDEX \"recipient_emailId_idx_f0213919\" ON \"public\".\"recipient\" (\"emailId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"recipient_emailId_idx_f0213919\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"recipient_emailId_idx_f0213919\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.recipient.recipient_emailId_fkey",
+    "label": "Add foreign key \"recipient_emailId_fkey\" on \"recipient\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "recipient_emailId_fkey",
+        "table": "recipient"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"recipient_emailId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipient_emailId_fkey",
+          "public",
+          "\"public\".\"recipient\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"recipient_emailId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"recipient\"\nADD CONSTRAINT \"recipient_emailId_fkey\"\nFOREIGN KEY (\"emailId\")\nREFERENCES \"public\".\"email\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"recipient_emailId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "recipient_emailId_fkey",
+          "public",
+          "\"public\".\"recipient\""
+        ]
+      }
+    ]
+  }
+]
