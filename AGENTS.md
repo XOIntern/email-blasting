@@ -1,3 +1,7 @@
+# What is this project?
+
+This project is a private email blasting web app for an organization built using Next.js, Neon Postgres, Prisma ORM v8, Shadcn/ui, and Resend.com (Email API). The web is protected wih basic auth (email and password). Logged in user can send bulk/batch emails to a list of recipients. Each recipients will receive a dedicated/unique email. User can add new recipients manually or upload/import from an Excel file with predefined table structure.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
