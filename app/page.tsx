@@ -4,6 +4,7 @@ import { useState, SubmitEvent } from 'react';
 
 import { Send, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import {
   Card,
   CardContent,
@@ -46,10 +47,12 @@ export default function Home() {
     <main className="flex min-h-screen w-full items-center justify-center p-4 md:p-8">
       <div className="flex w-full max-w-2xl flex-col gap-4">
         <div className="flex justify-start">
-          <Button type="button">
-            <Users data-icon="inline-start" />
-            Manage Recipients
-          </Button>
+          <Link href="/recipients">
+            <Button type="button">
+              <Users data-icon="inline-start" />
+              Manage Recipients
+            </Button>
+          </Link>
         </div>
         <form onSubmit={handleSubmit} className="w-full">
           <Card>
@@ -89,8 +92,8 @@ export default function Home() {
             </CardContent>
             <CardFooter className="flex justify-end">
               <Button type="submit">
-                <Send data-icon="inline-start" />
                 Send Email
+                <Send data-icon="inline-start" />
               </Button>
             </CardFooter>
           </Card>
