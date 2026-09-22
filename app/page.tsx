@@ -3,8 +3,8 @@
 import { useState, SubmitEvent } from 'react';
 
 import { Send, Users } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/card';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import Tiptap from '@/components/Tiptap';
 
 export default function Home() {
   const [subject, setSubject] = useState('');
@@ -78,15 +78,7 @@ export default function Home() {
                 </Field>
                 <Field>
                   <FieldLabel htmlFor="body">Body</FieldLabel>
-                  <Textarea
-                    id="body"
-                    name="body"
-                    placeholder="Write your email content here..."
-                    rows={8}
-                    className="min-h-32 resize-y"
-                    value={body}
-                    onChange={(e) => setBody(e.target.value)}
-                  />
+                  <Tiptap content={body} onChange={setBody} />
                 </Field>
               </FieldGroup>
             </CardContent>

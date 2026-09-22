@@ -14,6 +14,8 @@
     "@base-ui/react": "^1.8.0",
     "@prisma/client": "^7.10.0",
     "@prisma/orm-postgres": "^8.0.0-rc.11",
+    "@tiptap/extension-font-family": "^3.31.3",
+    "@tiptap/extension-text-style": "^3.31.3",
     "@tiptap/pm": "^3.31.3",
     "@tiptap/react": "^3.31.3",
     "@tiptap/starter-kit": "^3.31.3",
