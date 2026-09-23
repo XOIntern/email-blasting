@@ -23,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type Recipient = {
   id: number;
@@ -186,15 +187,16 @@ export default function RecipientsPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-1/2">Name</TableHead>
-                <TableHead className="w-1/2">Email Address</TableHead>
+                <TableHead className="w-1/5">Select</TableHead>
+                <TableHead className="w-2/5">Name</TableHead>
+                <TableHead className="w-2/5">Email Address</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading ? (
                 <TableRow>
                   <TableCell
-                    colSpan={2}
+                    colSpan={3}
                     className="text-center text-muted-foreground"
                   >
                     Loading…
@@ -203,7 +205,7 @@ export default function RecipientsPage() {
               ) : recipients.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={2}
+                    colSpan={3}
                     className="text-center text-muted-foreground"
                   >
                     No recipients yet. Add one to get started.
@@ -212,6 +214,9 @@ export default function RecipientsPage() {
               ) : (
                 recipients.map((recipient) => (
                   <TableRow key={recipient.id}>
+                    <TableCell>
+                      <Checkbox />
+                    </TableCell>
                     <TableCell className="font-medium">
                       {recipient.name}
                     </TableCell>
