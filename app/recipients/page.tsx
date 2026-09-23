@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, SubmitEvent } from 'react';
+import { useState, useEffect, SubmitEvent } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, FileSpreadsheet, Plus } from 'lucide-react';
@@ -24,34 +24,62 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-// Sample scaffold data reflecting Prisma Recipient schema
-const sampleRecipients = [
-  {
-    id: 1,
-    name: 'Alice Johnson',
-    emailAddress: 'alice.johnson@example.com',
-  },
-  {
-    id: 2,
-    name: 'Bob Smith',
-    emailAddress: 'bob.smith@example.com',
-  },
-  {
-    id: 3,
-    name: 'Catherine Lee',
-    emailAddress: 'catherine.lee@example.com',
-  },
-  {
-    id: 4,
-    name: 'David Miller',
-    emailAddress: 'david.miller@example.com',
-  },
-];
+type Recipient = {
+  id: number;
+  name: string;
+  emailAddress: string;
+};
 
 export default function RecipientsPage() {
   const [name, setName] = useState('');
   const [emailAddress, setEmailAddress] = useState('');
   const [open, setOpen] = useState(false);
+  const [recipients, setRecipients] = useState<Recipient[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const getRecipients = async () => {
+    const res = await fetch('/api/recipients');
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch recipients');
+    }
+
+    const data = await res.json();
+    return data.recipients;
+  };
+
+  const fetchRecipients = async () => {
+    try {
+      setLoading(true);
+      const recipients = await getRecipients();
+      setRecipients(recipients);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    getRecipients()
+      .then((recipients) => {
+        if (!cancelled) {
+          setRecipients(recipients);
+        }
+      })
+      .catch(console.error)
+      .finally(() => {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleAddRecipient(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -76,6 +104,7 @@ export default function RecipientsPage() {
     setName('');
     setEmailAddress('');
     setOpen(false);
+    fetchRecipients();
   }
 
   return (
@@ -162,14 +191,34 @@ export default function RecipientsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sampleRecipients.map((recipient) => (
-                <TableRow key={recipient.id}>
-                  <TableCell className="font-medium">
-                    {recipient.name}
+              {loading ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    className="text-center text-muted-foreground"
+                  >
+                    Loading…
                   </TableCell>
-                  <TableCell>{recipient.emailAddress}</TableCell>
                 </TableRow>
-              ))}
+              ) : recipients.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    className="text-center text-muted-foreground"
+                  >
+                    No recipients yet. Add one to get started.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                recipients.map((recipient) => (
+                  <TableRow key={recipient.id}>
+                    <TableCell className="font-medium">
+                      {recipient.name}
+                    </TableCell>
+                    <TableCell>{recipient.emailAddress}</TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </div>
