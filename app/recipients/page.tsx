@@ -1,8 +1,9 @@
 'use client';
 
+import { useState, SubmitEvent } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, FileSpreadsheet, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ArrowLeft, FileSpreadsheet, Plus } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -48,6 +49,35 @@ const sampleRecipients = [
 ];
 
 export default function RecipientsPage() {
+  const [name, setName] = useState('');
+  const [emailAddress, setEmailAddress] = useState('');
+  const [open, setOpen] = useState(false);
+
+  async function handleAddRecipient(e: SubmitEvent<HTMLFormElement>) {
+    e.preventDefault();
+
+    const response = await fetch('/api/recipients', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, emailAddress }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      console.error('Error:', error);
+      return;
+    }
+
+    const data = await response.json();
+
+    alert(data.message);
+    setName('');
+    setEmailAddress('');
+    setOpen(false);
+  }
+
   return (
     <main className="flex min-h-screen w-full items-center justify-center p-4 md:p-8">
       <div className="flex w-full max-w-3xl flex-col gap-4">
@@ -61,7 +91,7 @@ export default function RecipientsPage() {
           </Link>
 
           {/* Add Recipient Dialog */}
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger
               render={
                 <Button type="button">
@@ -78,7 +108,10 @@ export default function RecipientsPage() {
                 </DialogDescription>
               </DialogHeader>
 
-              <form className="flex flex-col gap-4">
+              <form
+                onSubmit={handleAddRecipient}
+                className="flex flex-col gap-4"
+              >
                 <FieldGroup>
                   <Field>
                     <FieldLabel htmlFor="name">Name</FieldLabel>
@@ -87,6 +120,8 @@ export default function RecipientsPage() {
                       name="name"
                       type="text"
                       placeholder="Enter recipient name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
                     />
                   </Field>
                   <Field>
@@ -98,6 +133,8 @@ export default function RecipientsPage() {
                       name="emailAddress"
                       type="email"
                       placeholder="Enter email address"
+                      value={emailAddress}
+                      onChange={(e) => setEmailAddress(e.target.value)}
                     />
                   </Field>
                 </FieldGroup>
