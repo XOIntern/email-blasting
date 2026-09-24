@@ -14,3 +14,8 @@ export async function createRecipient(formData: FormData) {
 
   revalidatePath('/recipients');
 }
+
+export async function deleteRecipient(id: number) {
+  await db.orm.public.Recipient.where({ id: id }).delete();
+  revalidatePath('/recipients');
+}
