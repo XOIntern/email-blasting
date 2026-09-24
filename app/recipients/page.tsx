@@ -5,15 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, FileSpreadsheet } from 'lucide-react';
 import CreateRecipientForm from './createForm';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { Checkbox } from '@/components/ui/checkbox';
+import RecipientsTable from './recipientsTable';
 
 export default async function RecipientsPage() {
   const recipients = await db.orm.public.Recipient.all();
@@ -39,41 +31,7 @@ export default async function RecipientsPage() {
         </div>
 
         {/* Recipients table */}
-        <div className="overflow-hidden rounded-xl border bg-card text-card-foreground shadow-xs">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-1/5">Select</TableHead>
-                <TableHead className="w-2/5">Name</TableHead>
-                <TableHead className="w-2/5">Email Address</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {recipients.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={3}
-                    className="text-center text-muted-foreground"
-                  >
-                    No recipients yet. Add one to get started.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                recipients.map((recipient) => (
-                  <TableRow key={recipient.id}>
-                    <TableCell>
-                      <Checkbox />
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {recipient.name}
-                    </TableCell>
-                    <TableCell>{recipient.emailAddress}</TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+        <RecipientsTable recipients={recipients} />
       </div>
     </main>
   );
