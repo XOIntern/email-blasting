@@ -1,10 +1,16 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { TextStyle, FontFamily, FontSize } from '@tiptap/extension-text-style';
-import { Bold as BoldIcon, Italic as ItalicIcon, Type } from 'lucide-react';
+import ImageResize from 'tiptap-extension-resize-image';
+import {
+  Bold as BoldIcon,
+  Italic as ItalicIcon,
+  ImageIcon,
+  Type,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export const FONT_FAMILIES = [
@@ -15,7 +21,10 @@ export const FONT_FAMILIES = [
   { label: 'Georgia', value: 'Georgia, serif' },
   { label: 'Helvetica', value: 'Helvetica, Arial, sans-serif' },
   { label: 'Impact', value: 'Impact, Charcoal, sans-serif' },
-  { label: 'Lucida Sans', value: '"Lucida Sans Unicode", "Lucida Grande", sans-serif' },
+  {
+    label: 'Lucida Sans',
+    value: '"Lucida Sans Unicode", "Lucida Grande", sans-serif',
+  },
   { label: 'Tahoma', value: 'Tahoma, Geneva, sans-serif' },
   { label: 'Times New Roman', value: '"Times New Roman", Times, serif' },
   { label: 'Trebuchet MS', value: '"Trebuchet MS", Helvetica, sans-serif' },
@@ -55,6 +64,7 @@ export default function Tiptap({
       TextStyle,
       FontFamily,
       FontSize,
+      ImageResize.configure({ inline: true, allowBase64: true }),
     ],
     content,
     editable,
@@ -82,15 +92,18 @@ export default function Tiptap({
     }
   }, [content, editor]);
 
+  const imageInputRef = useRef<HTMLInputElement>(null);
+
   if (!editor) {
     return (
       <div
         className={cn(
           'w-full rounded-md border border-input bg-background text-foreground shadow-xs',
-          className
+          className,
         )}
       >
         <div className="flex flex-wrap items-center gap-1.5 border-b border-border bg-muted/40 p-2">
+          <div className="h-8 w-8 rounded-md border border-input bg-muted animate-pulse" />
           <div className="h-8 w-8 rounded-md border border-input bg-muted animate-pulse" />
           <div className="h-8 w-8 rounded-md border border-input bg-muted animate-pulse" />
           <div className="h-4 w-px bg-border mx-1" />
@@ -107,7 +120,9 @@ export default function Tiptap({
   const isItalic = editor.isActive('italic');
 
   const currentFontFamily = editor.getAttributes('textStyle').fontFamily || '';
-  const activeFontFamily = FONT_FAMILIES.some((f) => f.value === currentFontFamily)
+  const activeFontFamily = FONT_FAMILIES.some(
+    (f) => f.value === currentFontFamily,
+  )
     ? currentFontFamily
     : '';
 
@@ -115,6 +130,21 @@ export default function Tiptap({
   const activeFontSize = FONT_SIZES.some((s) => s.value === currentFontSize)
     ? currentFontSize
     : '';
+
+  const handleImageInsert = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editor) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      editor.chain().focus().setImage({ src: dataUrl }).run();
+    };
+    reader.readAsDataURL(file);
+
+    // Reset so the same file can be re-selected
+    e.target.value = '';
+  };
 
   const handleFontChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
@@ -138,7 +168,7 @@ export default function Tiptap({
     <div
       className={cn(
         'w-full rounded-md border border-input bg-background text-foreground shadow-xs transition-colors focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/40',
-        className
+        className,
       )}
     >
       {/* Toolbar */}
@@ -155,7 +185,7 @@ export default function Tiptap({
             'inline-flex h-8 w-8 items-center justify-center rounded-md border text-sm font-medium transition-colors cursor-pointer',
             isBold
               ? 'border-primary bg-primary text-primary-foreground shadow-xs'
-              : 'border-input bg-background text-foreground hover:bg-muted hover:text-foreground'
+              : 'border-input bg-background text-foreground hover:bg-muted hover:text-foreground',
           )}
         >
           <BoldIcon className="size-4" />
@@ -173,18 +203,44 @@ export default function Tiptap({
             'inline-flex h-8 w-8 items-center justify-center rounded-md border text-sm font-medium transition-colors cursor-pointer',
             isItalic
               ? 'border-primary bg-primary text-primary-foreground shadow-xs'
-              : 'border-input bg-background text-foreground hover:bg-muted hover:text-foreground'
+              : 'border-input bg-background text-foreground hover:bg-muted hover:text-foreground',
           )}
         >
           <ItalicIcon className="size-4" />
         </button>
+
+        {/* Image Insert Button */}
+        <button
+          type="button"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => imageInputRef.current?.click()}
+          aria-label="Insert image"
+          title="Insert image"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background text-foreground hover:bg-muted hover:text-foreground text-sm font-medium transition-colors cursor-pointer"
+        >
+          <ImageIcon className="size-4" />
+        </button>
+
+        {/* Hidden file input for image upload */}
+        <input
+          ref={imageInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleImageInsert}
+          aria-hidden="true"
+          tabIndex={-1}
+        />
 
         {/* Divider */}
         <div className="h-4 w-px bg-border mx-1" aria-hidden="true" />
 
         {/* Font Family Selector */}
         <div className="flex items-center gap-1">
-          <Type className="size-3.5 text-muted-foreground shrink-0 ml-1" aria-hidden="true" />
+          <Type
+            className="size-3.5 text-muted-foreground shrink-0 ml-1"
+            aria-hidden="true"
+          />
           <select
             value={activeFontFamily}
             onChange={handleFontChange}
@@ -209,7 +265,10 @@ export default function Tiptap({
 
         {/* Font Size Selector */}
         <div className="flex items-center gap-1">
-          <span className="text-xs font-semibold text-muted-foreground shrink-0 ml-1" aria-hidden="true">
+          <span
+            className="text-xs font-semibold text-muted-foreground shrink-0 ml-1"
+            aria-hidden="true"
+          >
             Size
           </span>
           <select
