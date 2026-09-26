@@ -34,7 +34,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'b82551d8384154c39d66f7e5f90718884489f51ae0b5a530c50469053c833524'>;
+  StorageHashBase<'a90a5ee44a06a4e3d55ba9a2628d7dc71b4773481cc37138c61ba25f8470a20f'>;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
@@ -250,7 +250,7 @@ export type FieldOutputTypes = {
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
       readonly emailAddress: CodecTypes['pg/text@1']['output'];
-      readonly emailId: CodecTypes['pg/int4@1']['output'];
+      readonly emailId: CodecTypes['pg/int4@1']['output'] | null;
     };
   };
 };
@@ -265,7 +265,7 @@ export type FieldInputTypes = {
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
       readonly emailAddress: CodecTypes['pg/text@1']['input'];
-      readonly emailId: CodecTypes['pg/int4@1']['input'];
+      readonly emailId: CodecTypes['pg/int4@1']['input'] | null;
     };
   };
 };
@@ -278,7 +278,7 @@ export type StorageColumnTypes = {
     };
     readonly recipient: {
       readonly emailAddress: CodecTypes['pg/text@1']['output'];
-      readonly emailId: CodecTypes['pg/int4@1']['output'];
+      readonly emailId: CodecTypes['pg/int4@1']['output'] | null;
       readonly id: CodecTypes['pg/int4@1']['output'];
       readonly name: CodecTypes['pg/text@1']['output'];
     };
@@ -293,7 +293,7 @@ export type StorageColumnInputTypes = {
     };
     readonly recipient: {
       readonly emailAddress: CodecTypes['pg/text@1']['input'];
-      readonly emailId: CodecTypes['pg/int4@1']['input'];
+      readonly emailId: CodecTypes['pg/int4@1']['input'] | null;
       readonly id: CodecTypes['pg/int4@1']['input'];
       readonly name: CodecTypes['pg/text@1']['input'];
     };
@@ -312,8 +312,8 @@ export namespace Models {
     id: CodecTypes['pg/int4@1']['output'];
     name: CodecTypes['pg/text@1']['output'];
     emailAddress: CodecTypes['pg/text@1']['output'];
-    emailId: CodecTypes['pg/int4@1']['output'];
-    email: public_Email;
+    emailId: CodecTypes['pg/int4@1']['output'] | null;
+    email: public_Email | null;
     readonly [RelationKeys]?: 'email';
   };
 }
@@ -394,7 +394,7 @@ type ContractBase = Omit<
                 readonly emailId: {
                   readonly nativeType: 'int4';
                   readonly codecId: 'pg/int4@1';
-                  readonly nullable: false;
+                  readonly nullable: true;
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
@@ -496,7 +496,7 @@ type ContractBase = Omit<
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly emailId: {
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
             };
@@ -507,7 +507,7 @@ type ContractBase = Omit<
                   readonly model: 'Email';
                 };
                 readonly cardinality: 'N:1';
-                readonly nullable: false;
+                readonly nullable: true;
                 readonly on: {
                   readonly localFields: readonly ['emailId'];
                   readonly targetFields: readonly ['id'];

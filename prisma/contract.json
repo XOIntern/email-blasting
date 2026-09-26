@@ -84,7 +84,7 @@
                 }
               },
               "emailId": {
-                "nullable": false,
+                "nullable": true,
                 "type": {
                   "codecId": "pg/int4@1",
                   "kind": "scalar"
@@ -108,7 +108,7 @@
             "relations": {
               "email": {
                 "cardinality": "N:1",
-                "nullable": false,
+                "nullable": true,
                 "on": {
                   "localFields": [
                     "emailId"
@@ -192,7 +192,7 @@
                 "emailId": {
                   "codecId": "pg/int4@1",
                   "nativeType": "int4",
-                  "nullable": false
+                  "nullable": true
                 },
                 "id": {
                   "codecId": "pg/int4@1",
@@ -261,7 +261,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "b82551d8384154c39d66f7e5f90718884489f51ae0b5a530c50469053c833524"
+    "storageHash": "a90a5ee44a06a4e3d55ba9a2628d7dc71b4773481cc37138c61ba25f8470a20f"
   },
   "capabilities": {
     "postgres": {

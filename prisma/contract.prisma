@@ -12,6 +12,6 @@ model Recipient {
   name          String      @unique
   emailAddress  String      @unique
 
-  emailId       Int
-  email         Email       @relation(fields: [emailId], references: [id])
+  emailId       Int?
+  email         Email?       @relation(fields: [emailId], references: [id])
 }
