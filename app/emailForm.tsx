@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { sendEmail } from './actions';
+import { ResendAttachment, sendEmail } from './actions';
 import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,14 +16,39 @@ import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import Tiptap from '@/components/Tiptap';
 
+function parseBase64ImagesToCID(html: string) {
+  const attachments: ResendAttachment[] = [];
+  let counter = 0;
+
+  const updatedHtml = html.replace(
+    /<img([^>]*)\bsrc=["']data:image\/(png|jpeg|jpg|gif|webp);base64,([^"']+)["']([^>]*)>/gi,
+    (_, prefix, extension, base64Data, suffix) => {
+      counter++;
+      const contentId = `img_${counter}_${Date.now()}`;
+      const filename = `image_${counter}.${extension}`;
+
+      attachments.push({
+        filename,
+        content: base64Data, // Raw base64 content without data URI prefix
+        contentId,
+      });
+
+      return `<img${prefix}src="cid:${contentId}"${suffix}>`;
+    },
+  );
+
+  return { html: updatedHtml, attachments };
+}
+
 export default function EmailForm() {
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
 
   async function handleSubmit(formData: FormData) {
     const subject = formData.get('subject') as string;
+    const { html, attachments } = parseBase64ImagesToCID(body);
 
-    await sendEmail(subject, body);
+    await sendEmail(subject, html, attachments);
     alert('Email sent successfully!');
     setSubject('');
     setBody('');
