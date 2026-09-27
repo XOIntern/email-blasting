@@ -10,6 +10,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import { Trash } from 'lucide-react';
 
 interface Recipient {
   id: number;
@@ -73,6 +75,11 @@ export default function RecipientsTable({ recipients }: RecipientsTableProps) {
                 </TableCell>
                 <TableCell className="font-medium">{recipient.name}</TableCell>
                 <TableCell>{recipient.emailAddress}</TableCell>
+                <TableCell>
+                  <Button variant="destructive" type="button">
+                    <Trash />
+                  </Button>
+                </TableCell>
               </TableRow>
             ))
           )}
