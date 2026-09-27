@@ -10,8 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Button } from '@/components/ui/button';
-import { Trash } from 'lucide-react';
+import DeleteRecipientButton from './deleteButton';
 
 interface Recipient {
   id: number;
@@ -76,9 +75,14 @@ export default function RecipientsTable({ recipients }: RecipientsTableProps) {
                 <TableCell className="font-medium">{recipient.name}</TableCell>
                 <TableCell>{recipient.emailAddress}</TableCell>
                 <TableCell>
-                  <Button variant="destructive" type="button">
-                    <Trash />
-                  </Button>
+                  <DeleteRecipientButton
+                    recipientId={recipient.id}
+                    onSuccess={() => {
+                      setSelectedIds((prev) =>
+                        prev.filter((id) => id !== recipient.id),
+                      );
+                    }}
+                  />
                 </TableCell>
               </TableRow>
             ))
