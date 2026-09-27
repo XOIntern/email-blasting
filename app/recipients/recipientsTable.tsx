@@ -47,9 +47,9 @@ export default function RecipientsTable({ recipients }: RecipientsTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-1/5">Select</TableHead>
-            <TableHead className="w-2/5">Name</TableHead>
-            <TableHead className="w-2/5">Email Address</TableHead>
+            <TableHead className="w-1/5 font-bold">Select</TableHead>
+            <TableHead className="w-2/5 font-bold">Name</TableHead>
+            <TableHead className="w-2/5 font-bold">Email Address</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
