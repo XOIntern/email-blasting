@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -21,6 +22,24 @@ interface RecipientsTableProps {
 }
 
 export default function RecipientsTable({ recipients }: RecipientsTableProps) {
+  const [selectedIds, setSelectedIds] = useState<number[]>(() => {
+    if (typeof window === 'undefined') return [];
+    const saved = sessionStorage.getItem('selectedRecipientIds');
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  useEffect(() => {
+    sessionStorage.setItem('selectedRecipientIds', JSON.stringify(selectedIds));
+  }, [selectedIds]);
+
+  const toggleSelected = (id: number, isChecked: boolean) => {
+    if (isChecked) {
+      setSelectedIds((prev) => [...prev, id]);
+    } else {
+      setSelectedIds((prev) => prev.filter((item) => item !== id));
+    }
+  };
+
   return (
     <div className="overflow-hidden rounded-xl border bg-card text-card-foreground shadow-xs">
       <Table>
@@ -45,7 +64,12 @@ export default function RecipientsTable({ recipients }: RecipientsTableProps) {
             recipients.map((recipient) => (
               <TableRow key={recipient.id}>
                 <TableCell>
-                  <Checkbox />
+                  <Checkbox
+                    checked={selectedIds.includes(recipient.id)}
+                    onCheckedChange={(isChecked: boolean) =>
+                      toggleSelected(recipient.id, isChecked)
+                    }
+                  />
                 </TableCell>
                 <TableCell className="font-medium">{recipient.name}</TableCell>
                 <TableCell>{recipient.emailAddress}</TableCell>
