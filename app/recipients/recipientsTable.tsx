@@ -26,7 +26,12 @@ export default function RecipientsTable({ recipients }: RecipientsTableProps) {
   const [selectedIds, setSelectedIds] = useState<number[]>(() => {
     if (typeof window === 'undefined') return [];
     const saved = sessionStorage.getItem('selectedRecipientIds');
-    return saved ? JSON.parse(saved) : [];
+
+    if (saved !== null) {
+      return JSON.parse(saved);
+    }
+
+    return recipients.map((r) => r.id);
   });
 
   useEffect(() => {
