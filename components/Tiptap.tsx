@@ -75,7 +75,7 @@ export default function Tiptap({
     editorProps: {
       attributes: {
         class:
-          'min-h-[320px] p-3 text-sm focus:outline-none focus-visible:outline-none [&_p]:my-1.5 [&_p]:leading-relaxed',
+          'h-[320px] overflow-y-auto p-3 text-sm focus:outline-none focus-visible:outline-none [&_p]:my-1.5 [&_p]:leading-relaxed',
       },
     },
     onUpdate: ({ editor: currentEditor }) => {
@@ -111,7 +111,7 @@ export default function Tiptap({
           <div className="h-4 w-px bg-border mx-1" />
           <div className="h-8 w-32 rounded-md border border-input bg-muted animate-pulse" />
         </div>
-        <div className="min-h-[320px] p-3" />
+        <div className="h-[320px] p-3" />
       </div>
     );
   }
